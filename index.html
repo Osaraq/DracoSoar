@@ -2,95 +2,204 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>DracoSoar</title>
   <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
     body { 
-      margin: 0; 
       overflow: hidden; 
       background: linear-gradient(to bottom, #0a0e2a, #3a103d, #5a1b3a); 
       display: flex; 
       justify-content: center; 
       align-items: center; 
+      width: 100vw;
       height: 100vh;
       font-family: 'Arial', sans-serif;
+      position: fixed;
+      top: 0;
+      left: 0;
     }
+    
+    #gameContainer {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      max-width: 500px;
+      max-height: 800px;
+      aspect-ratio: 400/600;
+      margin: auto;
+    }
+    
     canvas { 
       background: transparent; 
-      border: 10px solid #3a2c2a; 
-      border-radius: 15px; 
-      box-shadow: 0 0 40px rgba(255,215,0,0.3);
-      transition: all 0.3s ease;
-    }
-    canvas:hover {
-      box-shadow: 0 0 50px rgba(255,215,0,0.5);
+      border: 2vw solid #3a2c2a; 
+      border-radius: 3vw; 
+      box-shadow: 0 0 5vw rgba(255,215,0,0.3);
+      width: 100%;
+      height: 100%;
+      display: block;
     }
     
     /* Name Input Screen Styles */
     #nameScreen {
       position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       background: rgba(20, 10, 30, 0.9);
       color: #f8f8f8;
-      padding: 40px;
-      border-radius: 15px;
+      padding: 5vw;
+      border-radius: 3vw;
       text-align: center;
-      max-width: 320px;
+      width: 90%;
+      max-width: 400px;
       z-index: 100;
-      border: 2px solid #ffd700;
-      box-shadow: 0 0 30px rgba(255,215,0,0.4);
+      border: 0.5vw solid #ffd700;
+      box-shadow: 0 0 5vw rgba(255,215,0,0.4);
     }
+    
     #nameScreen h1 {
       color: #ffd700;
-      margin-bottom: 25px;
-      text-shadow: 0 0 10px rgba(255,215,0,0.7);
-      font-size: 2.5rem;
+      margin-bottom: 3vw;
+      text-shadow: 0 0 2vw rgba(255,215,0,0.7);
+      font-size: clamp(24px, 8vw, 40px);
     }
+    
     #nameInput {
-      padding: 12px;
-      font-size: 16px;
+      padding: 2vw;
+      font-size: clamp(14px, 4vw, 18px);
       width: 80%;
-      margin-bottom: 20px;
-      border: 2px solid #5d4037;
-      border-radius: 8px;
+      margin-bottom: 3vw;
+      border: 0.5vw solid #5d4037;
+      border-radius: 2vw;
       background: rgba(255,255,255,0.9);
       text-align: center;
     }
+    
     #startBtn {
-      padding: 12px 30px;
+      padding: 2vw 6vw;
       background: linear-gradient(to bottom, #4CAF50, #2E7D32);
       color: white;
       border: none;
-      border-radius: 8px;
-      font-size: 18px;
+      border-radius: 2vw;
+      font-size: clamp(16px, 4vw, 20px);
       cursor: pointer;
       transition: all 0.3s;
-      box-shadow: 0 4px 0 #1B5E20;
+      box-shadow: 0 0.5vw 0 #1B5E20;
     }
-    #startBtn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 0 #1B5E20;
-    }
+    
     #startBtn:active {
-      transform: translateY(1px);
-      box-shadow: 0 3px 0 #1B5E20;
+      transform: translateY(0.5vw);
+      box-shadow: 0 0.2vw 0 #1B5E20;
+    }
+
+    /* Mobile Controls */
+    #mobileControls {
+      position: absolute;
+      bottom: 5vw;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      gap: 5vw;
+      z-index: 50;
+    }
+    
+    .mobileBtn {
+      width: 15vw;
+      height: 15vw;
+      min-width: 60px;
+      min-height: 60px;
+      max-width: 80px;
+      max-height: 80px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(5px);
+      border: 0.5vw solid rgba(255, 215, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: clamp(20px, 6vw, 30px);
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    
+    .mobileBtn:active {
+      background: rgba(255, 215, 0, 0.3);
+      transform: scale(0.95);
+    }
+    
+    /* Hide mobile controls on desktop */
+    @media (hover: hover) and (pointer: fine) {
+      #mobileControls {
+        display: none;
+      }
     }
   </style>
 </head>
 <body>
-  <div id="nameScreen">
-    <h1>DracoSoar</h1>
-    <input type="text" id="nameInput" placeholder="Enter your name" maxlength="15">
-    <br>
-    <button id="startBtn">Start Game</button>
+  <div id="gameContainer">
+    <div id="nameScreen">
+      <h1>DracoSoar</h1>
+      <input type="text" id="nameInput" placeholder="Enter your name" maxlength="15">
+      <br>
+      <button id="startBtn">Start Game</button>
+    </div>
+    
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- Mobile Controls -->
+    <div id="mobileControls">
+      <div class="mobileBtn" id="jumpBtn">↑</div>
+      <div class="mobileBtn" id="restartBtn">↻</div>
+    </div>
   </div>
   
-  <canvas id="gameCanvas" width="400" height="600"></canvas>
-  
   <script>
+    // Setup canvas to fit container
+    const gameContainer = document.getElementById('gameContainer');
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
+    
+    // Set initial canvas size
+    function resizeCanvas() {
+      const containerWidth = gameContainer.clientWidth;
+      const containerHeight = gameContainer.clientHeight;
+      
+      // Maintain aspect ratio (400/600)
+      const aspectRatio = 400 / 600;
+      let canvasWidth = containerWidth;
+      let canvasHeight = containerWidth / aspectRatio;
+      
+      if (canvasHeight > containerHeight) {
+        canvasHeight = containerHeight;
+        canvasWidth = canvasHeight * aspectRatio;
+      }
+      
+      canvas.width = 400; // Internal resolution
+      canvas.height = 600;
+      
+      // Scale the canvas to fit the container
+      canvas.style.width = `${canvasWidth}px`;
+      canvas.style.height = `${canvasHeight}px`;
+    }
+    
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    
+    // Get other elements
     const nameScreen = document.getElementById('nameScreen');
     const nameInput = document.getElementById('nameInput');
     const startBtn = document.getElementById('startBtn');
+    const jumpBtn = document.getElementById('jumpBtn');
+    const restartBtn = document.getElementById('restartBtn');
 
     // Enhanced Visual Elements
     const bgImg = new Image(); 
@@ -219,20 +328,70 @@
       playerName = savedName;
     }
 
-    document.addEventListener('keydown',e=>{
-      if(e.code==='Space'){
-        if(gameState==='playing'){
-          bird.velocity=bird.jump;
-          bird.flapTimer=10;
-          playFlapSound();
-        }
-        else if(gameState==='gameOver' && reviveAvailable){
-          revive();
-        }
-        else if(gameState==='gameOver') reset();
+    // Unified input handler for both keyboard and touch
+    function handleJump() {
+      if(gameState==='playing'){
+        bird.velocity=bird.jump;
+        bird.flapTimer=10;
+        playFlapSound();
+      }
+      else if(gameState==='gameOver' && reviveAvailable){
+        revive();
+      }
+      else if(gameState==='gameOver') {
+        reset();
+      }
+    }
+
+    function handleRestart() {
+      if(gameState==='gameOver') {
+        reset();
+      }
+    }
+
+    // Keyboard controls
+    document.addEventListener('keydown', e => {
+      if(e.code==='Space') {
+        handleJump();
       }
     });
 
+    // Mobile touch controls
+    jumpBtn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      handleJump();
+    });
+
+    // Also allow mouse clicks for testing on desktop
+    jumpBtn.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      handleJump();
+    });
+
+    restartBtn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      handleRestart();
+    });
+
+    restartBtn.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      handleRestart();
+    });
+
+    // Full canvas tap for mobile (alternative control)
+    canvas.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      handleJump();
+    });
+
+    // Prevent scrolling on touch devices
+    document.addEventListener('touchmove', (e) => {
+      if (gameState === 'playing') {
+        e.preventDefault();
+      }
+    }, { passive: false });
+
+    // Revive function
     function revive() {
       gameState = 'playing';
       reviveAvailable = false;
@@ -244,6 +403,7 @@
       playSound(440, 'square', 0.5);
     }
 
+    // Reset function
     function reset(){
       gameState='playing';
       score=0;
@@ -262,7 +422,6 @@
     function spawnPipes(){
       const topH=Math.random()*(canvas.height-pipeGap-150)+75;
       
-      // Top pipe with enhanced design
       pipes.push({
         x:canvas.width,
         y:0,
@@ -272,7 +431,6 @@
         color: `hsl(${Math.random() * 30 + 100}, 70%, 30%)`
       });
       
-      // Bottom pipe
       pipes.push({
         x:canvas.width,
         y:topH+pipeGap,
@@ -282,7 +440,6 @@
         color: `hsl(${Math.random() * 30 + 100}, 70%, 35%)`
       });
       
-      // More frequent coins with better placement
       if(Math.random()<0.4) {
         coins.push({
           x:canvas.width + pipeWidth/2 - coinSize/2,
@@ -300,7 +457,6 @@
       frameCount++;
       backgroundOffset = (backgroundOffset + 0.2) % canvas.width;
       
-      // Update particles
       for (let i = 0; i < particles.length; i++) {
         particles[i].update();
         if (particles[i].life <= 0) {
@@ -309,20 +465,17 @@
         }
       }
       
-      // Handle screen shake
       if (shakeIntensity > 0) {
         shakeIntensity *= 0.9;
         if (shakeIntensity < 0.5) shakeIntensity = 0;
       }
       
-      // Handle immunity timer
       if(immunityTimer > 0) {
         immunityTimer--;
       }
       
       if(frameCount%spawnInterval===0) spawnPipes();
       
-      // Enhanced wing flapping animation
       bird.wingAngle = Math.sin(frameCount * 0.2) * 0.3;
       bird.velocity += bird.gravity;
       bird.y += bird.velocity;
@@ -336,7 +489,6 @@
       });
       while(coins.length&&coins[0].x+coinSize<0) coins.shift();
       
-      // Only check collisions if not immune
       if(immunityTimer <= 0) {
         for(let p of pipes) {
           if(bird.x<p.x+p.width && 
@@ -349,7 +501,6 @@
         if(bird.y+bird.height>canvas.height||bird.y<0) gameOver();
       }
       
-      // Coin collection with particles
       for(let c of coins) {
         if(!c.collected && 
            bird.x<c.x+c.size && 
@@ -362,7 +513,6 @@
         }
       }
       
-      // Scoring
       for(let i=0;i<pipes.length;i+=2){
         let tp=pipes[i];
         if(!tp.scored&&tp.x+pipeWidth<bird.x){
@@ -395,6 +545,9 @@
     }
 
     function draw(){
+      // Clear canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
       // Apply screen shake
       const shakeX = shakeIntensity > 0 ? Math.random() * shakeIntensity - shakeIntensity/2 : 0;
       const shakeY = shakeIntensity > 0 ? Math.random() * shakeIntensity - shakeIntensity/2 : 0;
@@ -505,11 +658,11 @@
         if(reviveAvailable) {
           ctx.fillStyle='rgba(100,255,100,0.9)';
           ctx.font='24px Arial';
-          ctx.fillText('Press SPACE to revive!',canvas.width/2,canvas.height/2+40);
+          ctx.fillText('Tap to revive!',canvas.width/2,canvas.height/2+40);
         } else {
           ctx.fillStyle='rgba(255,255,255,0.8)';
           ctx.font='22px Arial';
-          ctx.fillText('Press SPACE to restart',canvas.width/2,canvas.height/2+40);
+          ctx.fillText('Tap to restart',canvas.width/2,canvas.height/2+40);
         }
       }
       
