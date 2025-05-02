@@ -185,7 +185,40 @@
     nameInput.addEventListener('keypress', (e) => e.key==='Enter' && startGame());
     function startGame() { playerName = nameInput.value.trim() || 'Player'; localStorage.setItem('playerName', playerName); nameScreen.style.display='none'; gameState='playing'; playFlapSound(); }
     const savedName=localStorage.getItem('playerName'); if(savedName){ nameInput.value=savedName; playerName=savedName; }
-    document.addEventListener('keydown', e => { if(e.code==='Space'){ if(gameState==='playing'){ bird.velocity=bird.jump; bird.flapTimer=10; playFlapSound(); } else if(gameState==='gameOver' && reviveAvailable){ revive(); } else if(gameState==='gameOver') reset(); } });
+    
+    // Touch and keyboard controls
+    function handleAction() {
+      if(gameState==='playing') {
+        bird.velocity=bird.jump;
+        bird.flapTimer=10;
+        playFlapSound();
+      } else if(gameState==='gameOver' && reviveAvailable) {
+        revive();
+      } else if(gameState==='gameOver') {
+        reset();
+      }
+    }
+    
+    // Keyboard controls
+    document.addEventListener('keydown', e => {
+      if(e.code==='Space') {
+        handleAction();
+      }
+    });
+    
+    // Touch controls
+    canvas.addEventListener('touchstart', function(e) {
+      e.preventDefault();
+      handleAction();
+    }, { passive: false });
+    
+    // Also prevent default touch behavior on the document to avoid scrolling
+    document.addEventListener('touchmove', function(e) {
+      if(gameState === 'playing') {
+        e.preventDefault();
+      }
+    }, { passive: false });
+
     function revive(){ gameState='playing'; reviveAvailable=false; immunityTimer=IMMUNITY_DURATION; bird.y=canvas.height/2; bird.velocity=0; shakeIntensity=10; playSound(220,'sine',1.0); playSound(440,'square',0.5);}    
     function reset(){ gameState='playing'; score=0; bird.y=300; bird.velocity=0; pipes.length=0; coins.length=0; particles.length=0; frameCount=0; bird.flapTimer=0; reviveAvailable=true; immunityTimer=0; shakeIntensity=0; }
     function spawnPipes(){ const topH=Math.random()*(canvas.height-pipeGap-150)+75; pipes.push({ x:canvas.width, y:0, width:pipeWidth, height:topH, scored:false, color:`hsl(${Math.random()*30+100},70%,30%)` }); pipes.push({ x:canvas.width, y:topH+pipeGap, width:pipeWidth, height:canvas.height-topH-pipeGap, scored:false, color:`hsl(${Math.random()*30+100},70%,35%)` }); if(Math.random()<0.4){ coins.push({ x:canvas.width+pipeWidth/2-coinSize/2, y:topH+pipeGap/2-coinSize/2, size:coinSize, collected:false, rotation:Math.random()*Math.PI*2 }); }}
