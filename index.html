@@ -179,7 +179,7 @@
     const coins=[], coinSize=24;
     let frameCount=0, spawnInterval=100;
     let reviveAvailable = true, immunityTimer = 0, IMMUNITY_DURATION = 120;
-    let backgroundOffset = 0, shakeIntensity = 0;
+    let backgroundOffset = 0, shakeIntensity = 1;
 
     startBtn.addEventListener('click', startGame);
     nameInput.addEventListener('keypress', (e) => e.key==='Enter' && startGame());
